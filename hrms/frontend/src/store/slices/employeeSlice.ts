@@ -17,7 +17,7 @@ export const fetchEmployees = createAsyncThunk(
   'employees/fetchAll',
   async () => {
     const response = await employeeService.getAll();
-    return response.data || response;
+    return Array.isArray(response) ? response : response.data;
   }
 );
 

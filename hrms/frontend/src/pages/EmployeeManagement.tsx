@@ -22,7 +22,8 @@ const EmployeeManagement: React.FC = () => {
 
   useEffect(() => {
     dispatch(fetchEmployees());
-  }, [dispatch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
