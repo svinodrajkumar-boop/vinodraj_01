@@ -2,6 +2,14 @@ const { Settings, Company } = require('../models');
 const logger = require('../utils/logger');
 const { AppError } = require('../middleware/errorHandler');
 
+// Default company ID constant
+const DEFAULT_COMPANY_ID = '00000000-0000-0000-0000-000000000000';
+
+// Helper function to get company ID with fallback
+const getCompanyId = (req, queryCompanyId) => {
+  return queryCompanyId || req.user?.employee?.company_id || DEFAULT_COMPANY_ID;
+};
+
 class SettingsController {
   // Get settings for a company
   static async getSettings(req, res, next) {
@@ -9,7 +17,7 @@ class SettingsController {
       const { company_id } = req.query;
       
       // Use company_id from query or from authenticated user
-      const companyId = company_id || req.user.employee?.company_id || '00000000-0000-0000-0000-000000000000';
+      const companyId = getCompanyId(req, company_id);
 
       let settings = await Settings.model.findOne({
         where: { company_id: companyId },
@@ -55,7 +63,7 @@ class SettingsController {
     try {
       const { company_id, module_settings, dropdown_values, leave_eligibility_days, employee_id_prefix, employee_id_start_number } = req.body;
 
-      const companyId = company_id || req.user.employee?.company_id || '00000000-0000-0000-0000-000000000000';
+      const companyId = getCompanyId(req, company_id);
 
       let settings = await Settings.model.findOne({
         where: { company_id: companyId }
@@ -74,15 +82,15 @@ class SettingsController {
       } else {
         // Update existing settings
         await settings.update({
-          module_settings: module_settings || settings.module_settings,
-          dropdown_values: dropdown_values || settings.dropdown_values,
+          module_settings: module_settings !== undefined ? module_settings : settings.module_settings,
+          dropdown_values: dropdown_values !== undefined ? dropdown_values : settings.dropdown_values,
           leave_eligibility_days: leave_eligibility_days !== undefined ? leave_eligibility_days : settings.leave_eligibility_days,
-          employee_id_prefix: employee_id_prefix || settings.employee_id_prefix,
-          employee_id_start_number: employee_id_start_number || settings.employee_id_start_number
+          employee_id_prefix: employee_id_prefix !== undefined ? employee_id_prefix : settings.employee_id_prefix,
+          employee_id_start_number: employee_id_start_number !== undefined ? employee_id_start_number : settings.employee_id_start_number
         });
       }
 
-      logger.info(`Settings updated for company: ${companyId} by ${req.user.username}`);
+      logger.info(`Settings updated for company: ${companyId} by ${req.user?.username || 'unknown'}`);
 
       res.status(200).json({
         success: true,
@@ -99,7 +107,7 @@ class SettingsController {
   static async getDropdownValues(req, res, next) {
     try {
       const { company_id } = req.query;
-      const companyId = company_id || req.user.employee?.company_id || '00000000-0000-0000-0000-000000000000';
+      const companyId = getCompanyId(req, company_id);
 
       let settings = await Settings.model.findOne({
         where: { company_id: companyId }
@@ -126,7 +134,7 @@ class SettingsController {
   static async getModuleSettings(req, res, next) {
     try {
       const { company_id } = req.query;
-      const companyId = company_id || req.user.employee?.company_id || '00000000-0000-0000-0000-000000000000';
+      const companyId = getCompanyId(req, company_id);
 
       let settings = await Settings.model.findOne({
         where: { company_id: companyId }
@@ -158,7 +166,7 @@ class SettingsController {
         throw new AppError('Module settings are required', 400, 'MISSING_MODULE_SETTINGS');
       }
 
-      const companyId = company_id || req.user.employee?.company_id || '00000000-0000-0000-0000-000000000000';
+      const companyId = getCompanyId(req, company_id);
 
       let settings = await Settings.model.findOne({
         where: { company_id: companyId }
@@ -173,7 +181,7 @@ class SettingsController {
         await settings.update({ module_settings });
       }
 
-      logger.info(`Module settings updated for company: ${companyId} by ${req.user.username}`);
+      logger.info(`Module settings updated for company: ${companyId} by ${req.user?.username || 'unknown'}`);
 
       res.status(200).json({
         success: true,
@@ -195,7 +203,7 @@ class SettingsController {
         throw new AppError('Dropdown values are required', 400, 'MISSING_DROPDOWN_VALUES');
       }
 
-      const companyId = company_id || req.user.employee?.company_id || '00000000-0000-0000-0000-000000000000';
+      const companyId = getCompanyId(req, company_id);
 
       let settings = await Settings.model.findOne({
         where: { company_id: companyId }
@@ -210,7 +218,7 @@ class SettingsController {
         await settings.update({ dropdown_values });
       }
 
-      logger.info(`Dropdown values updated for company: ${companyId} by ${req.user.username}`);
+      logger.info(`Dropdown values updated for company: ${companyId} by ${req.user?.username || 'unknown'}`);
 
       res.status(200).json({
         success: true,

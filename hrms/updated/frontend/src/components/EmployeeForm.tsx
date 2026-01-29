@@ -172,6 +172,13 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ open, onClose, onSave, empl
   };
 
   const handleSubmit = async () => {
+    // Validate required fields
+    if (!formData.first_name || !formData.last_name || !formData.official_email || 
+        !formData.phone_number || !formData.joining_date) {
+      alert('Please fill in all required fields: First Name, Last Name, Official Email, Phone Number, and Joining Date');
+      return;
+    }
+
     try {
       setSaving(true);
       if (employee?.id) {
@@ -181,9 +188,9 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ open, onClose, onSave, empl
       }
       onSave();
       onClose();
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to save employee:', err);
-      alert('Failed to save employee. Please check the form and try again.');
+      alert(err.response?.data?.message || 'Failed to save employee. Please check the form and try again.');
     } finally {
       setSaving(false);
     }
@@ -303,7 +310,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ open, onClose, onSave, empl
                       value={formData.gender}
                       onChange={(e) => handleChange('gender', e.target.value)}
                     >
-                      {dropdownValues?.gender.map((option) => (
+                      {(dropdownValues?.gender || []).map((option) => (
                         <MenuItem key={option} value={option}>
                           {option}
                         </MenuItem>
@@ -321,7 +328,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ open, onClose, onSave, empl
                       value={formData.marital_status}
                       onChange={(e) => handleChange('marital_status', e.target.value)}
                     >
-                      {dropdownValues?.marital_status.map((option) => (
+                      {(dropdownValues?.marital_status || []).map((option) => (
                         <MenuItem key={option} value={option}>
                           {option}
                         </MenuItem>
@@ -339,7 +346,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ open, onClose, onSave, empl
                       value={formData.blood_group}
                       onChange={(e) => handleChange('blood_group', e.target.value)}
                     >
-                      {dropdownValues?.blood_group.map((option) => (
+                      {(dropdownValues?.blood_group || []).map((option) => (
                         <MenuItem key={option} value={option}>
                           {option}
                         </MenuItem>
@@ -377,7 +384,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ open, onClose, onSave, empl
                     value={formData.employment_type}
                     onChange={(e) => handleChange('employment_type', e.target.value)}
                   >
-                    {dropdownValues?.employment_type.map((option) => (
+                    {(dropdownValues?.employment_type || []).map((option) => (
                       <MenuItem key={option} value={option}>
                         {option}
                       </MenuItem>

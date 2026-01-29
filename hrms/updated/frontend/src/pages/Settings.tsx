@@ -26,7 +26,7 @@ const SettingsPage: React.FC = () => {
 
   useEffect(() => {
     loadSettings();
-  }, []);
+  }, []); // Only run on mount
 
   const loadSettings = async () => {
     try {
@@ -49,7 +49,8 @@ const SettingsPage: React.FC = () => {
       await settingsService.updateSettings(settings);
       setSuccess(true);
       setError(null);
-      setTimeout(() => setSuccess(false), 3000);
+      const timer = setTimeout(() => setSuccess(false), 3000);
+      return () => clearTimeout(timer);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to save settings');
     } finally {
@@ -174,8 +175,9 @@ const SettingsPage: React.FC = () => {
                   type="number"
                   label="Employee ID Start Number"
                   value={settings.employee_id_start_number}
-                  onChange={(e) => setSettings({ ...settings, employee_id_start_number: parseInt(e.target.value) })}
+                  onChange={(e) => setSettings({ ...settings, employee_id_start_number: parseInt(e.target.value, 10) || 1 })}
                   helperText="Starting number for employee ID generation"
+                  inputProps={{ min: 1 }}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -184,8 +186,9 @@ const SettingsPage: React.FC = () => {
                   type="number"
                   label="Leave Eligibility Period (days)"
                   value={settings.leave_eligibility_days}
-                  onChange={(e) => setSettings({ ...settings, leave_eligibility_days: parseInt(e.target.value) })}
+                  onChange={(e) => setSettings({ ...settings, leave_eligibility_days: parseInt(e.target.value, 10) || 0 })}
                   helperText="Number of days after joining before employee is eligible for leaves (0 = immediate)"
+                  inputProps={{ min: 0 }}
                 />
               </Grid>
             </Grid>
