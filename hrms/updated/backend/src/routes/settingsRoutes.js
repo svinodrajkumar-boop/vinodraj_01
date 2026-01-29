@@ -2,6 +2,10 @@ const express = require('express');
 const router = express.Router();
 const SettingsController = require('../controllers/settingsController');
 const { authenticateJWT, authorizeRoles } = require('../middleware/auth');
+const { rateLimiter } = require('../middleware/rateLimiter');
+
+// Apply rate limiting to all routes
+router.use(rateLimiter);
 
 // All settings routes require authentication
 router.use(authenticateJWT);
