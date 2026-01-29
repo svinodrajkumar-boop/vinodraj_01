@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Typography,
@@ -12,13 +12,24 @@ import {
   CircularProgress,
   Alert,
   Chip,
+  Button,
+  IconButton,
+  Tooltip,
 } from '@mui/material';
+import {
+  Add as AddIcon,
+  Edit as EditIcon,
+  Visibility as ViewIcon,
+} from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { fetchEmployees } from '../store/slices/employeeSlice';
+import EmployeeForm from '../components/EmployeeForm';
 
 const EmployeeManagement: React.FC = () => {
   const dispatch = useAppDispatch();
   const { employees, loading, error } = useAppSelector((state) => state.employees);
+  const [formOpen, setFormOpen] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState<any>(null);
 
   useEffect(() => {
     dispatch(fetchEmployees());
@@ -36,6 +47,25 @@ const EmployeeManagement: React.FC = () => {
       default:
         return 'default';
     }
+  };
+
+  const handleAddEmployee = () => {
+    setSelectedEmployee(null);
+    setFormOpen(true);
+  };
+
+  const handleEditEmployee = (employee: any) => {
+    setSelectedEmployee(employee);
+    setFormOpen(true);
+  };
+
+  const handleFormClose = () => {
+    setFormOpen(false);
+    setSelectedEmployee(null);
+  };
+
+  const handleFormSave = () => {
+    dispatch(fetchEmployees());
   };
 
   if (loading) {
@@ -64,12 +94,23 @@ const EmployeeManagement: React.FC = () => {
 
   return (
     <Box>
-      <Typography variant="h4" gutterBottom>
-        Employee Management
-      </Typography>
-      <Typography variant="body1" color="textSecondary" sx={{ mb: 3 }}>
-        View and manage employee information
-      </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Box>
+          <Typography variant="h4" gutterBottom>
+            Employee Management
+          </Typography>
+          <Typography variant="body1" color="textSecondary">
+            View and manage employee information
+          </Typography>
+        </Box>
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={handleAddEmployee}
+        >
+          Add Employee
+        </Button>
+      </Box>
 
       <TableContainer component={Paper}>
         <Table>
@@ -81,14 +122,15 @@ const EmployeeManagement: React.FC = () => {
               <TableCell><strong>Phone</strong></TableCell>
               <TableCell><strong>Joining Date</strong></TableCell>
               <TableCell><strong>Status</strong></TableCell>
+              <TableCell align="center"><strong>Actions</strong></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {employees.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} align="center">
+                <TableCell colSpan={7} align="center">
                   <Typography variant="body2" color="textSecondary" sx={{ py: 3 }}>
-                    No employees found. Add employees through the backend API or wait for data to load.
+                    No employees found. Click "Add Employee" to create your first employee.
                   </Typography>
                 </TableCell>
               </TableRow>
@@ -107,12 +149,31 @@ const EmployeeManagement: React.FC = () => {
                       size="small"
                     />
                   </TableCell>
+                  <TableCell align="center">
+                    <Tooltip title="View Details">
+                      <IconButton size="small" color="primary">
+                        <ViewIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Edit Employee">
+                      <IconButton size="small" color="secondary" onClick={() => handleEditEmployee(employee)}>
+                        <EditIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </TableCell>
                 </TableRow>
               ))
             )}
           </TableBody>
         </Table>
       </TableContainer>
+
+      <EmployeeForm
+        open={formOpen}
+        onClose={handleFormClose}
+        onSave={handleFormSave}
+        employee={selectedEmployee}
+      />
     </Box>
   );
 };
