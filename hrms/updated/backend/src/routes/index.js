@@ -6,12 +6,14 @@ const authRoutes = require('./authRoutes');
 const employeeRoutes = require('./employeeRoutes');
 const departmentRoutes = require('./departmentRoutes');
 const designationRoutes = require('./designationRoutes');
+const settingsRoutes = require('./settingsRoutes');
 
 // Use routes
 router.use('/auth', authRoutes);
 router.use('/employees', employeeRoutes);
 router.use('/departments', departmentRoutes);
 router.use('/designations', designationRoutes);
+router.use('/settings', settingsRoutes);
 
 // Default route
 router.get('/', (req, res) => {
@@ -21,7 +23,8 @@ router.get('/', (req, res) => {
       auth: '/auth',
       employees: '/employees',
       departments: '/departments',
-      designations: '/designations'
+      designations: '/designations',
+      settings: '/settings'
     },
     status: 'active'
   });

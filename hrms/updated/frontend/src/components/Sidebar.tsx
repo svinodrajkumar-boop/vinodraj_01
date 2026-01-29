@@ -13,6 +13,7 @@ import {
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleIcon from '@mui/icons-material/People';
 import BusinessIcon from '@mui/icons-material/Business';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 const drawerWidth = 240;
 
@@ -29,6 +30,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/' },
     { text: 'Employees', icon: <PeopleIcon />, path: '/employees' },
     { text: 'Departments', icon: <BusinessIcon />, path: '/departments' },
+    { text: 'Settings', icon: <SettingsIcon />, path: '/settings' },
   ];
 
   const handleNavigation = (path: string) => {

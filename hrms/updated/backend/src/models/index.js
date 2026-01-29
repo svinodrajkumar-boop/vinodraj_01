@@ -7,6 +7,7 @@ const Department = require('./Department');
 const Designation = require('./Designation');
 const Employee = require('./Employee');
 const User = require('./User');
+const Settings = require('./Settings');
 
 // Simple function to initialize models
 const initializeModels = async () => {
@@ -21,6 +22,7 @@ const initializeModels = async () => {
     Designation.initModel();
     Employee.initModel();
     User.initModel();
+    Settings.initModel();
 
     // Return both models and sequelize instance
     return {
@@ -29,6 +31,7 @@ const initializeModels = async () => {
       Designation,
       Employee,
       User,
+      Settings,
       sequelize  // Make sure sequelize is included
     };
   } catch (error) {
