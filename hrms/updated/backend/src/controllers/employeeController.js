@@ -9,7 +9,12 @@ class EmployeeController {
       const {
         first_name, last_name, official_email, phone_number,
         joining_date, department_id, designation_id, employee_id,
-        date_of_birth, gender, employment_type, employee_category
+        date_of_birth, gender, employment_type, employee_category,
+        marital_status, blood_group, personal_email, emergency_contact,
+        middle_name, languages, education, experience, skills,
+        bank_name, account_number, ifsc_code, account_holder_name,
+        pan_number, aadhaar_number, uan_number, pf_number, esic_number,
+        professional_tax_state, reporting_manager_id, team_lead_id, hr_manager_id
       } = req.body;
 
       // Check if employee ID already exists
@@ -40,15 +45,37 @@ class EmployeeController {
         designation_id,
         employee_id: generatedEmployeeId,
         first_name,
+        middle_name,
         last_name,
         official_email,
+        personal_email,
         phone_number,
+        emergency_contact,
         joining_date: new Date(joining_date),
         date_of_birth: date_of_birth ? new Date(date_of_birth) : null,
         gender,
+        marital_status,
+        blood_group,
         employment_type: employment_type || 'Permanent',
         employee_category: employee_category || 'Level1',
-        employment_status: 'Active'
+        employment_status: 'Active',
+        languages: languages || [],
+        education: education || [],
+        experience: experience || [],
+        skills: skills || [],
+        bank_name,
+        account_number,
+        ifsc_code,
+        account_holder_name,
+        pan_number,
+        aadhaar_number,
+        uan_number,
+        pf_number,
+        esic_number,
+        professional_tax_state,
+        reporting_manager_id,
+        team_lead_id,
+        hr_manager_id
       });
 
       logger.info(`Employee created: ${generatedEmployeeId} by ${req.user.username}`);
